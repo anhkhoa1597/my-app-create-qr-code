@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f9fb">
+  <meta name="description" content="Create and download a QR code for a URL, text, Wi-Fi network or email. Generated locally in your browser.">
+  <title>QR Maker</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js" integrity="sha384-8FWZA6BGMXhsfO+BLtrJK0We6gg5o1JyO8xQm6peWDEUs17ACA5ziE/NIAkl9z2k" crossorigin="anonymous"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>QR Maker<span aria-hidden="true">.</span></h1>
+      <p>Create a QR code in seconds.</p>
+    </header>
+
+    <div class="workspace">
+      <form id="qr-form" class="editor" novalidate autocomplete="off">
+        <h2>Content</h2>
+        <div class="type-selector" role="tablist" aria-label="QR type">
+          <button type="button" id="tab-url" role="tab" aria-selected="true" aria-controls="panel-url" data-type="url">URL</button>
+          <button type="button" id="tab-text" role="tab" aria-selected="false" aria-controls="panel-text" tabindex="-1" data-type="text">Text</button>
+          <!-- <button type="button" id="tab-wifi" role="tab" aria-selected="false" aria-controls="panel-wifi" tabindex="-1" data-type="wifi">Wi-Fi</button> -->
+          <button type="button" id="tab-email" role="tab" aria-selected="false" aria-controls="panel-email" tabindex="-1" data-type="email">Email</button>
+        </div>
+
+        <section id="panel-url" class="fields" role="tabpanel" aria-labelledby="tab-url">
+          <div class="field">
+            <label for="url">Website URL</label>
+            <input id="url" type="text" inputmode="url" placeholder="https://example.com" spellcheck="false" autocapitalize="none" aria-describedby="url-hint url-error">
+            <p class="hint" id="url-hint">A link to wherever you want to take people.</p>
+            <p class="error" id="url-error" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <section id="panel-text" class="fields" role="tabpanel" aria-labelledby="tab-text" hidden>
+          <div class="field">
+            <label for="text">Your text</label>
+            <textarea id="text" rows="4" placeholder="Write something to share…" aria-describedby="text-error"></textarea>
+            <p class="error" id="text-error" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- <section id="panel-wifi" class="fields" role="tabpanel" aria-labelledby="tab-wifi" hidden>
+          <div class="field">
+            <label for="ssid">Network name / SSID</label>
+            <input id="ssid" type="text" placeholder="Your network name" spellcheck="false" autocapitalize="none" aria-describedby="ssid-error">
+            <p class="error" id="ssid-error" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="security">Security</label>
+            <select id="security"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">None</option></select>
+          </div>
+          <div class="field" id="password-field">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Network password" autocomplete="new-password" aria-describedby="password-error">
+            <p class="error" id="password-error" aria-live="polite"></p>
+          </div>
+        </section> -->
+
+        <section id="panel-email" class="fields" role="tabpanel" aria-labelledby="tab-email" hidden>
+          <div class="field">
+            <label for="email">Email address</label>
+            <input id="email" type="email" placeholder="hello@example.com" autocapitalize="none" spellcheck="false" aria-describedby="email-error">
+            <p class="error" id="email-error" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="subject">Subject <span class="optional">(optional)</span></label>
+            <input id="subject" type="text" placeholder="What's it about?">
+          </div>
+          <div class="field">
+            <label for="message">Message <span class="optional">(optional)</span></label>
+            <textarea id="message" rows="3" placeholder="Your message…"></textarea>
+          </div>
+        </section>
+
+        <section class="appearance" aria-labelledby="appearance-title">
+          <div class="section-heading"><h2 id="appearance-title">Appearance</h2><button class="reset" id="reset" type="button">Reset</button></div>
+          <div class="color-grid">
+            <div class="field">
+              <label for="foreground-hex">QR color</label>
+              <div class="color-control">
+                <input id="foreground" type="color" value="#000000" aria-label="Pick QR color">
+                <input id="foreground-hex" type="text" value="#000000" maxlength="7" spellcheck="false" autocomplete="off" aria-describedby="foreground-error">
+              </div>
+              <p class="error" id="foreground-error" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="background-hex">Background</label>
+              <div class="color-control">
+                <input id="background" type="color" value="#ffffff" aria-label="Pick background color">
+                <input id="background-hex" type="text" value="#FFFFFF" maxlength="7" spellcheck="false" autocomplete="off" aria-describedby="background-error">
+              </div>
+              <p class="error" id="background-error" aria-live="polite"></p>
+            </div>
+          </div>
+          <p class="warning" id="contrast-warning" aria-live="polite"></p>
+          <div class="field size-field">
+            <label for="size">Image size</label>
+            <select id="size" aria-describedby="size-hint"><option value="128">128 × 128 px</option><option value="256" selected>256 × 256 px</option><option value="512">512 × 512 px</option><option value="1024">1024 × 1024 px</option></select>
+            <p class="hint" id="size-hint">The resolution of your downloaded PNG.</p>
+          </div>
+        </section>
+      </form>
+
+      <section class="preview" aria-labelledby="preview-title">
+        <div class="section-heading"><h2 id="preview-title">Preview</h2><span id="dimensions" class="dimensions">256 × 256 px</span></div>
+        <div class="preview-stage">
+          <p id="empty-state">Your QR code will appear here</p>
+          <canvas id="qr-canvas" width="256" height="256" role="img" aria-label="Generated QR code" hidden></canvas>
+        </div>
+        <p id="content-preview" class="content-preview">Add your content to get started.</p>
+        <p id="preview-status" class="error" role="status"></p>
+        <button type="button" id="download" class="download" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg>
+          Download PNG
+        </button>
+      </section>
+    </div>
+    <p class="privacy">QR codes are generated locally in your browser.</p>
+    <noscript><p class="error">Enable JavaScript to create QR codes.</p></noscript>
+  </main>
+</body>
+</html>
