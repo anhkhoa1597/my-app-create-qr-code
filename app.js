@@ -13,11 +13,16 @@ if (typeof qrcode === 'function') {
 }
 
 function getFormData() {
-  return {
-    url: $('url').value.trim(), text: $('text').value,
-    ssid: $('ssid').value, password: $('password').value, security: $('security').value,
-    email: $('email').value.trim(), subject: $('subject').value, message: $('message').value,
-  };
+  switch (state.type) {
+    case 'url': return { url: $('url').value.trim() };
+    case 'text': return { text: $('text').value };
+    case 'wifi': return {
+      ssid: $('ssid').value, password: $('password').value, security: $('security').value,
+    };
+    case 'email': return {
+      email: $('email').value.trim(), subject: $('subject').value, message: $('message').value,
+    };
+  }
 }
 
 function normalizeURL(value) {
@@ -226,8 +231,10 @@ tabs.forEach((tab, index) => {
 $('qr-form').addEventListener('submit', (event) => event.preventDefault());
 $('qr-form').addEventListener('input', (event) => {
   if (event.target.type === 'color') $(`${event.target.id}-hex`).value = event.target.value.toUpperCase();
-  $('password-field').hidden = $('security').value === 'nopass';
-  $('password').disabled = $('security').value === 'nopass';
+  if (event.target.id === 'security') {
+    $('password-field').hidden = $('security').value === 'nopass';
+    $('password').disabled = $('security').value === 'nopass';
+  }
   // Invalidate immediately so a pending edit can never download an older QR.
   clearPreview();
   clearTimeout(updateTimer);
@@ -236,4 +243,5 @@ $('qr-form').addEventListener('input', (event) => {
 $('qr-form').addEventListener('change', updatePreview);
 $('reset').addEventListener('click', resetSettings);
 $('download').addEventListener('click', downloadQRCode);
+$('copyright-year').textContent = new Date().getFullYear();
 updatePreview();
